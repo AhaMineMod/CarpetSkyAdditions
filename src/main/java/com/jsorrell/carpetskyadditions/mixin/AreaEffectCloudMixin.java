@@ -28,7 +28,7 @@ public class AreaEffectCloudMixin {
     private void convertDeepslateOnTick(CallbackInfo ci) {
         if (SkyAdditionsSettings.renewableDeepslateFromSplash) {
             AreaEffectCloud cloud = asCloud();
-            if (cloud.getPotion() == DeepslateConversionHelper.CONVERSION_POTION) {
+            if (cloud.potionContents.potion().get() == DeepslateConversionHelper.CONVERSION_POTION) {
                 DeepslateConversionHelper.convertDeepslateInCloud(cloud.level(), cloud.getBoundingBox());
             }
         }

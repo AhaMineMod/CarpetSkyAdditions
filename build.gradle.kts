@@ -1,3 +1,4 @@
+import com.diffplug.gradle.spotless.YamlExtension.JacksonYamlGradleConfig
 
 class Versions(properties: ExtraPropertiesExtension) {
   val mod = properties["mod_version"] as String
@@ -14,7 +15,10 @@ class Versions(properties: ExtraPropertiesExtension) {
 }
 
 plugins {
-  id("fabric-loom") version "1.4-SNAPSHOT"
+  id("fabric-loom") version "1.7-SNAPSHOT"
+  id("com.diffplug.spotless") version "latest.release"
+//  id("io.github.juuxel.loom-vineflower") version "latest.release"
+  id("org.jetbrains.changelog") version "latest.release"
   id("com.modrinth.minotaur") version "latest.release"
 }
 
@@ -76,11 +80,12 @@ base {
 
 tasks {
   processResources {
-    val templateContext = mapOf(
-      "name" to project.extra["mod_name"],
-      "version" to version,
-      "mc_compatibility" to versions.minecraftCompatibility,
-    )
+    val templateContext =
+      mapOf(
+        "name" to project.extra["mod_name"],
+        "version" to version,
+        "mc_compatibility" to versions.minecraftCompatibility,
+      )
 
     inputs.properties(templateContext)
     filesMatching("fabric.mod.json") {
@@ -149,4 +154,74 @@ tasks.assemble.get().dependsOn(
   },
 )
 
+spotless {
+  format("misc") {
+    target("*.md", ".gitignore")
+    indentWithSpaces(2)
+    endWithNewline()
+  }
 
+  java {
+    target("src/*/java/**/*.java")
+    palantirJavaFormat()
+    toggleOffOn()
+    removeUnusedImports()
+    importOrder()
+  }
+
+  kotlinGradle {
+    target("*.gradle.kts")
+    ktlint()
+  }
+
+  json {
+    target("**/*.json")
+    targetExclude("${layout.buildDirectory}/**", "run/**")
+    gson().indentWithSpaces(2)
+  }
+
+  yaml {
+    target("**/*.yml", "**/*.yaml")
+    (jackson() as JacksonYamlGradleConfig).yamlFeature("WRITE_DOC_START_MARKER", false)
+  }
+}
+
+changelog {
+  version.set(versions.mod)
+  repositoryUrl.set(project.extra["repository"] as String)
+  introduction.set(
+    """
+    All notable changes to this project will be documented in this file.
+
+    The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+    """.trimIndent(),
+  )
+  groups.set(listOf("Added", "Changed", "Deprecated", "Removed", "Fixed"))
+
+  // Curseforge markdown doesn't recognize "-"
+  itemPrefix.set("*")
+}
+
+modrinth {
+  token.set(providers.environmentVariable("MODRINTH_TOKEN"))
+  projectId.set("carpet-sky-additions")
+  versionNumber.set(providers.gradleProperty("mod_version"))
+  versionName.set("${versions.mod} for Minecraft ${versions.minecraft}")
+  versionType.set("release")
+  uploadFile.set(tasks.remapJar)
+  gameVersions.add(versions.minecraft)
+  loaders.add("fabric")
+  loaders.add("quilt")
+  changelog.set(
+    provider {
+      project.changelog.renderItem(project.changelog.get(versions.mod).withHeader(false).withEmptySections(false).withLinks(false))
+    },
+  )
+  dependencies {
+    required.project("fabric-api")
+    required.project("carpet")
+    required.project("cloth-config")
+    optional.project("modmenu")
+  }
+}
+tasks.modrinth.get().dependsOn(tasks.patchChangelog)

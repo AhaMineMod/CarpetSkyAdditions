@@ -1,5 +1,10 @@
-accessWidener	v1	named
+accessWidener	v2	named
 extendable	class	net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator
+extendable  class net/minecraft/resources/ResourceLocation
 
 accessible	class	net/minecraft/world/entity/monster/EnderMan$EndermanTakeBlockGoal
 accessible	class	net/minecraft/world/entity/monster/EnderMan$EndermanLeaveBlockGoal
+accessible class net/minecraft/resources/ResourceLocation
+accessible method net/minecraft/resources/ResourceLocation <init> (Ljava/lang/String;Ljava/lang/String;)V
+
+accessible field net/minecraft/world/entity/AreaEffectCloud potionContents Lnet/minecraft/world/item/alchemy/PotionContents;

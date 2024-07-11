@@ -9,15 +9,12 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.animal.camel.CamelAi;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -48,8 +45,8 @@ public abstract class CamelMixin extends AbstractHorse implements CamelInterface
     }
 
     @Override
-    public boolean canBeLeashed(Player player) {
-        boolean normallyCanBeLeashed = super.canBeLeashed(player);
+    public boolean canBeLeashed() {
+        boolean normallyCanBeLeashed = super.canBeLeashed();
         boolean canBeLeashed = normallyCanBeLeashed && !isTraderCamel();
         if (normallyCanBeLeashed && !canBeLeashed) {
             // TODO improve this
@@ -108,7 +105,9 @@ public abstract class CamelMixin extends AbstractHorse implements CamelInterface
     // }
 
     // // This only works with the mod on the client side
-    // @Inject(method = "positionRider", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/camel/Camel;clampRotation(Lnet/minecraft/world/entity/Entity;)V"), cancellable = true)
+    // @Inject(method = "positionRider", at = @At(value = "INVOKE", target =
+    // "Lnet/minecraft/world/entity/animal/camel/Camel;clampRotation(Lnet/minecraft/world/entity/Entity;)V"),
+    // cancellable = true)
     // protected void fixTraderRotation(Entity passenger, MoveFunction callback, CallbackInfo ci) {
     //     if (isTraderCamel()) {
     //         getControllingPassenger().yBodyRot = yBodyRot;

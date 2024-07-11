@@ -25,15 +25,10 @@ public class DrownedMixin extends Zombie {
 
     @Inject(method = "finalizeSpawn", at = @At("TAIL"))
     private void holdSnifferEgg(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            MobSpawnType reason,
-            SpawnGroupData spawnData,
-            CompoundTag dataTag,
-            CallbackInfoReturnable<SpawnGroupData> cir) {
+        ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, SpawnGroupData spawnGroupData, CallbackInfoReturnable<SpawnGroupData> cir) {
         if (SkyAdditionsSettings.sniffersFromDrowneds
-                && getItemBySlot(EquipmentSlot.OFFHAND).isEmpty()
-                && level.getRandom().nextFloat() < 0.01F) {
+            && getItemBySlot(EquipmentSlot.OFFHAND).isEmpty()
+            && level.getRandom().nextFloat() < 0.01F) {
             setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SNIFFER_EGG));
             setDropChance(EquipmentSlot.OFFHAND, 0);
         }

@@ -2,7 +2,7 @@ package com.jsorrell.carpetskyadditions.advancements.predicates;
 
 import com.jsorrell.carpetskyadditions.util.SkyAdditionsResourceLocation;
 import com.mojang.serialization.Codec;
-
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -14,12 +14,11 @@ public class SkyAdditionsLootItemConditions {
     public static final LootItemConditionType ENTITY_PROPERTIES =
             register("entity_properties", SkyAdditionsLootItemEntityPropertyCondition.CODEC);
 
-    private static LootItemConditionType register(
-            String registryName, Codec<? extends LootItemCondition> codec) {
+    private static LootItemConditionType register(String registryName, Codec<? extends LootItemCondition> codec) {
         return Registry.register(
                 BuiltInRegistries.LOOT_CONDITION_TYPE,
                 new SkyAdditionsResourceLocation(registryName),
-                new LootItemConditionType(codec));
+                new LootItemConditionType(MapCodec.assumeMapUnsafe(codec)));
     }
 
     public static void bootstrap() {}

@@ -1,5 +1,7 @@
 package com.jsorrell.carpetskyadditions.helpers;
 
+import static net.minecraft.world.level.dimension.BuiltinDimensionTypes.OVERWORLD_EFFECTS;
+
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.jsorrell.carpetskyadditions.settings.SkyAdditionsSettings;
@@ -14,7 +16,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseRouter;
@@ -25,7 +26,7 @@ public abstract class CoralSpreader {
 
     // Returns a suitability value in the range of 0 to 1
     public static double calculateCoralSuitability(ServerLevel level, BlockPos pos) {
-        if (level.dimensionTypeId() != BuiltinDimensionTypes.OVERWORLD) {
+        if (!level.dimensionTypeRegistration().is(OVERWORLD_EFFECTS)) {
             return 0;
         }
 

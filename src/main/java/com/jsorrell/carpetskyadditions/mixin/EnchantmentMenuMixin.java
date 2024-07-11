@@ -6,13 +6,15 @@ import static com.jsorrell.carpetskyadditions.helpers.SkyAdditionsEnchantmentHel
 import com.jsorrell.carpetskyadditions.settings.SkyAdditionsSettings;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.ByteTag;
+import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.phys.AABB;
@@ -36,9 +38,9 @@ public class EnchantmentMenuMixin {
                     @At(
                             value = "INVOKE",
                             target =
-                                    "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;selectEnchantment(Lnet/minecraft/util/RandomSource;Lnet/minecraft/world/item/ItemStack;IZ)Ljava/util/List;"))
+                                    "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;selectEnchantment(Lnet/minecraft/util/RandomSource;Lnet/minecraft/world/item/ItemStack;ILjava/util/stream/Stream;)Ljava/util/List;"))
     private List<EnchantmentInstance> addSwiftSneak(
-            RandomSource random, ItemStack stack, int level, boolean allowTreasure) {
+            RandomSource random, ItemStack stack, int level, Stream<Holder<Enchantment>> possibleEnchantments) {
         if (SkyAdditionsSettings.renewableSwiftSneak) {
             boolean hasWardenNearby = access.evaluate((world, blockPos) -> {
                         AABB box = new AABB(blockPos).inflate(MAX_WARDEN_DISTANCE_FOR_SWIFT_SNEAK);
@@ -53,9 +55,9 @@ public class EnchantmentMenuMixin {
 
             if (hasWardenNearby) {
                 stack = new ItemStack(stack.getItem(), stack.getCount());
-                stack.addTagElement(SWIFT_SNEAK_ENCHANTABLE_TAG, ByteTag.ONE);
+                stack.getFrame().addTag(SWIFT_SNEAK_ENCHANTABLE_TAG);
             }
         }
-        return EnchantmentHelper.selectEnchantment(random, stack, level, allowTreasure);
+        return EnchantmentHelper.selectEnchantment(random, stack, level, possibleEnchantments);
     }
 }

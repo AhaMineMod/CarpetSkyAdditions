@@ -35,8 +35,7 @@ public abstract class SaplingBlockMixin extends BushBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState floor, BlockGetter level, BlockPos pos) {
-        if (SkyAdditionsSettings.saplingsDieOnSand && !isPropagule() && floor.is(BlockTags.SAND))
-            return true;
+        if (SkyAdditionsSettings.saplingsDieOnSand && !isPropagule() && floor.is(BlockTags.SAND)) return true;
         return super.mayPlaceOn(floor, level, pos);
     }
 
@@ -53,7 +52,10 @@ public abstract class SaplingBlockMixin extends BushBlock {
 
     @Inject(method = "isValidBonemealTarget", at = @At("HEAD"), cancellable = true)
     private void stopBonemealingOnSand(
-            LevelReader level, BlockPos pos, BlockState state, /* boolean isClient, */ CallbackInfoReturnable<Boolean> cir) {
+            LevelReader level,
+            BlockPos pos,
+            BlockState state, /* boolean isClient, */
+            CallbackInfoReturnable<Boolean> cir) {
         if (SkyAdditionsSettings.saplingsDieOnSand && saplingIsOnSand(level, pos)) {
             cir.setReturnValue(false);
         }

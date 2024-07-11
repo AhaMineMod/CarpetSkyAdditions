@@ -2,8 +2,6 @@ package com.jsorrell.carpetskyadditions.mixin;
 
 import net.minecraft.util.datafix.fixes.WorldGenSettingsHeightAndBiomeFix;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(WorldGenSettingsHeightAndBiomeFix.class)
 public class WorldGenSettingsHeightAndBiomeFixMixin {

@@ -1,6 +1,7 @@
 package com.jsorrell.carpetskyadditions.helpers;
 
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEventListener;
 import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public class InstantListener implements GameEventListener {
     protected final PositionSource positionSource;
@@ -29,7 +31,7 @@ public class InstantListener implements GameEventListener {
     }
 
     @Override
-    public PositionSource getListenerSource() {
+    public @NotNull PositionSource getListenerSource() {
         return positionSource;
     }
 
@@ -39,16 +41,17 @@ public class InstantListener implements GameEventListener {
     }
 
     @Override
-    public boolean handleGameEvent(ServerLevel level, GameEvent event, GameEvent.Context context, Vec3 originPos) {
+    public boolean handleGameEvent(
+            ServerLevel level, Holder<GameEvent> gameEvent, GameEvent.Context context, Vec3 originPos) {
         if (onCooldown) {
             return false;
         }
 
-        if (!instantListenerConfig.canAccept(event, context)) {
+        if (!instantListenerConfig.canAccept(gameEvent, context)) {
             return false;
         }
 
-        instantListenerConfig.accept(level, this, originPos, event, context);
+        instantListenerConfig.accept(level, this, originPos, gameEvent, context);
         onCooldown = true;
         return true;
     }
@@ -58,7 +61,7 @@ public class InstantListener implements GameEventListener {
             return GameEventTags.VIBRATIONS;
         }
 
-        default boolean canAccept(GameEvent gameEvent, GameEvent.Context context) {
+        default boolean canAccept(Holder<GameEvent> gameEvent, GameEvent.Context context) {
             if (!gameEvent.is(getTag())) {
                 return false;
             }
@@ -87,7 +90,7 @@ public class InstantListener implements GameEventListener {
                 ServerLevel level,
                 GameEventListener listener,
                 Vec3 originPos,
-                GameEvent gameEvent,
+                Holder<GameEvent> gameEvent,
                 GameEvent.Context context);
     }
 }

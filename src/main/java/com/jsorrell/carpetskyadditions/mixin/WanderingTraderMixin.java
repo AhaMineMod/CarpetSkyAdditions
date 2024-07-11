@@ -16,7 +16,7 @@ import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import org.objectweb.asm.Opcodes;
@@ -57,11 +57,12 @@ public abstract class WanderingTraderMixin extends AbstractVillager {
         return WanderingTraderHelper.getTrades();
     }
 
-    @Override
-    // This only works with the mod on the client side
-    public float getMyRidingOffset(Entity entity) {
-        return TraderCamelHelper.isMountedTrader(asTrader()) ? -0.45f : super.getMyRidingOffset(entity);
-    }
+    //    @Override
+    //    // This only works with the mod on the client side
+    //    public float getMyRidingOffset(Entity entity) {
+    //        return TraderCamelHelper.isMountedTrader(asTrader()) ? -0.45f : super.getMyRidingOffset(entity);
+    //    }
+    //
 
     @Override
     public void remove(RemovalReason reason) {
@@ -104,7 +105,7 @@ public abstract class WanderingTraderMixin extends AbstractVillager {
     // we need to boost the trader's goal speeds significantly.
     @Unique
     private void reregisterGoalsForMountedTrader() {
-        goalSelector.getRunningGoals().forEach(WrappedGoal::stop);
+        goalSelector.getAvailableGoals().forEach(WrappedGoal::stop);
         double s = 8.0;
         goalSelector.removeAllGoals(g -> true);
 
@@ -113,7 +114,7 @@ public abstract class WanderingTraderMixin extends AbstractVillager {
                 0,
                 new UseItemGoal<>(
                         this,
-                        PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.INVISIBILITY),
+                        PotionContents.createItemStack(new ItemStack(Items.POTION).getItem(), Potions.INVISIBILITY),
                         SoundEvents.WANDERING_TRADER_DISAPPEARED,
                         wanderingTrader -> this.level().isNight() && !wanderingTrader.isInvisible()));
         goalSelector.addGoal(
@@ -143,7 +144,7 @@ public abstract class WanderingTraderMixin extends AbstractVillager {
 
     @Unique
     private void reregisterGoalsForUnmountedTrader() {
-        goalSelector.getRunningGoals().forEach(WrappedGoal::stop);
+        goalSelector.getAvailableGoals().forEach(WrappedGoal::stop);
         goalSelector.removeAllGoals(g -> true);
         registerGoals();
     }

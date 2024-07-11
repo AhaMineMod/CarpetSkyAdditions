@@ -81,7 +81,15 @@ public abstract class WanderingTraderSpawnerMixin {
         return true;
     }
 
-    @Inject(method = "spawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/npc/WanderingTraderSpawner;hasEnoughSpace(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(
+            method = "spawn",
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lnet/minecraft/world/entity/npc/WanderingTraderSpawner;hasEnoughSpace(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"),
+            cancellable = true,
+            locals = LocalCapture.CAPTURE_FAILSOFT)
     private void spawnTrader(
             ServerLevel serverLevel,
             CallbackInfoReturnable<Boolean> cir,
@@ -109,7 +117,7 @@ public abstract class WanderingTraderSpawnerMixin {
                     serverLevelData.setWanderingTraderId(wanderingTrader.getUUID());
                     wanderingTrader.setDespawnDelay(48000);
 
-                    traderCamel.equipSaddle(null);
+                    traderCamel.equipSaddle(null, null);
                     wanderingTrader.moveTo(
                             traderCamel.getX(), traderCamel.getY(), traderCamel.getZ(), traderCamel.getYRot(), 0.0F);
                     wanderingTrader.startRiding(traderCamel, true);
@@ -168,8 +176,8 @@ public abstract class WanderingTraderSpawnerMixin {
                 spawnChance = 25;
                 cir.setReturnValue(1);
             } else {
-                spawnChance = Mth.clamp(spawnChance + 25, 25,
-                        (int) Math.round(SkyAdditionsSettings.maxWanderingTraderSpawnChance * 1000d));
+                spawnChance = Mth.clamp(spawnChance + 25, 25, (int)
+                        Math.round(SkyAdditionsSettings.maxWanderingTraderSpawnChance * 1000d));
             }
 
             serverLevelData.setWanderingTraderSpawnChance(spawnChance);
